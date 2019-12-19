@@ -26,5 +26,9 @@ class TestMixin:
 
 
 if __name__ == "__main__":
-    res = Test().run()
+    t = Test()
+    res = t.run()
     print("Returned:", res)
+    print("t.x:", t.x)
+    import dis
+    dis.dis(t.run)

@@ -20,7 +20,7 @@ class MixinTarget:
         elif self.inject_type == "inject":
             original_func = getattr(target_cls, self.fname)
             original_code = original_func.__code__
-            if any(x in dis.hasjabs for x in original_code.co_code):
+            if any(x in dis.hasjabs for x in original_code.co_code[::2]):
                 # TODO
                 raise Exception("Absolute jumps are not supported yet!")
             removed_returns = self.func.__code__.co_code
@@ -41,8 +41,9 @@ class MixinTarget:
                 new_bytes = remapped_bytes + original_code.co_code
                 result_code = new_code(merged_code, code_=new_bytes)
             elif self.at[0] == "RETURN":
-                # TODO: hasjabs will fail
-                new_bytes = original_code.co_code + remapped_bytes
+                # TODO: jumps will fail
+                # TODO: Apply this to all RETURNs, not just the last one
+                new_bytes = original_code.co_code[:-2] + remapped_bytes + original_code.co_code[-2:]
                 result_code = new_code(merged_code, code_=new_bytes)
             else:
                 raise Exception(f"Unsupported at: {self.at[0]}")
