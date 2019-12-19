@@ -7,6 +7,7 @@ from typing import Tuple
 def new_code(fc, *, argcount=None, posonlyargcount=None, kwonlyargcount=None, nlocals=None, stacksize=None, flags=None,
              code_=None, consts=None, names=None, varnames=None, filename=None, name=None, firstlineno=None,
              lnotab=None, freevars=None, cellvars=None):
+    # I could use fc.replace but I prefer having a utility function since it's easier to debug
     return CodeType(
         argcount or fc.co_argcount,
         posonlyargcount or fc.co_posonlyargcount,
@@ -28,6 +29,7 @@ def new_code(fc, *, argcount=None, posonlyargcount=None, kwonlyargcount=None, nl
 
 
 def new_instruction(instr, *, opname=None, opcode=None, arg=None, argval=None, argrepr=None, offset=None, starts_line=None, is_jump_target=None):
+    # Creates a new instruction since namedtuples aren't mutable
     return dis.Instruction(
         opname or instr.opname,
         opcode or instr.opcode,
@@ -42,6 +44,7 @@ def new_instruction(instr, *, opname=None, opcode=None, arg=None, argval=None, a
 
 def merge_code(original: CodeType, added: CodeType) -> Tuple[CodeType, bytes]:
     # Merges consts, varnames and names (though names probably isn't useful here)
+    # It also takes the max stack size of the two and increases it by 1 to be safe.
     all_consts = list(original.co_consts)
     all_varnames = list(original.co_varnames)
     all_names = list(original.co_names)
