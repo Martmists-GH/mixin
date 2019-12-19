@@ -21,6 +21,7 @@ class TestMixin:
     def run_return(self):
         # Note: This run right before the return, so `self.x` has already been loaded onto the stack. This means that
         # The function will still return 3 instead of 10
+        # For this reason, the stack size is increased by one in merge_stack.
         self.x = 10
 
 

@@ -1,3 +1,4 @@
+import dis
 import inspect
 
 from code_utils import new_code, merge_code
@@ -19,8 +20,11 @@ class MixinTarget:
         elif self.inject_type == "inject":
             original_func = getattr(target_cls, self.fname)
             original_code = original_func.__code__
+            if any(x in dis.hasjabs for x in original_code.co_code):
+                # TODO
+                raise Exception("Absolute jumps are not supported yet!")
             removed_returns = self.func.__code__.co_code
-            # Remove all returns from the original code
+            # Remove all returns from the new code
             while b"S\x00" in removed_returns:
                 index = removed_returns.find(b"S\x00")
                 # TODO: Fix jumps
